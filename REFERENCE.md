@@ -33,6 +33,7 @@
 * [`st2::profile::selinux`](#st2profileselinux): Configure SELinux so that StackStorm services run properly
 * [`st2::profile::server`](#st2profileserver): Profile to install, configure and manage all server components for st2
 * [`st2::profile::web`](#st2profileweb): Profile to install, configure and manage StackStorm web UI (st2web).
+* [`st2::rbac`](#st2rbac): Manages the installation of RBAC and RBAC resources for assignments, roles and mappings
 * [`st2::repo`](#st2repo): Manages the installation of st2 required repos for installing the StackStorm packages.
 * [`st2::repo::apt`](#st2repoapt): Apt repo for StackStorm
 * [`st2::repo::yum`](#st2repoyum): Yum repo for StackStorm
@@ -49,7 +50,6 @@
 * [`st2::client::settings`](#st2clientsettings): Generates a configuration file for the st2 CLI (st2client)
 * [`st2::kv`](#st2kv): Sets a value to the StackStorm Key/Value Store
 * [`st2::pack`](#st2pack): Manages a StackStorm Pack
-* [`st2::rbac`](#st2rbac): This defined type creates RBAC resources for users
 * [`st2::service`](#st2service): Creates additional service for components that can be scaled out
 * [`st2::user`](#st2user): Creates an system (OS level) user for use with StackStorm
 
@@ -2974,6 +2974,87 @@ Directory where the StackStorm WebUI site lives on the filesystem
 
 Default value: `$st2::web_root`
 
+### <a name="st2rbac"></a>`st2::rbac`
+
+Manages the installation of RBAC and RBAC resources for assignments, roles and mappings
+
+#### Examples
+
+##### 
+
+```puppet
+class { 'st2::rbac':
+  $enable => true,
+  $sync_remote_groups => true,
+  Hash $mappings = {
+    stormers:
+      group: "CN=stormers,OU=groups,DC=stackstorm,DC=net"
+      description: "Automatically grant admin role to all stormers group members."
+      roles:
+        - "admin"
+  }
+}
+```
+
+#### Parameters
+
+The following parameters are available in the `st2::rbac` defined type:
+
+* [`enable`](#enable)
+* [`sync_remote_groups`](#sync_remote_groups)
+* [`backend`](#backend)
+* [`assignments`](#assignments)
+* [`roles`](#roles)
+* [`mappings`](#mappings)
+
+##### <a name="enable"></a>`enable`
+
+Data type: `Boolean`
+
+
+
+Default value: `'true'`
+
+##### <a name="sync_remote_groups"></a>`sync_remote_groups`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### <a name="backend"></a>`backend`
+
+Data type: `String`
+
+
+
+Default value: `'default'`
+
+##### <a name="assignments"></a>`assignments`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="roles"></a>`roles`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="mappings"></a>`mappings`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
 ### <a name="st2repo"></a>`st2::repo`
 
 Manages the installation of st2 required repos for installing the StackStorm packages.
@@ -3696,67 +3777,6 @@ Data type: `Any`
 
 
 Default value: ``undef``
-
-### <a name="st2rbac"></a>`st2::rbac`
-
-This defined type creates RBAC resources for users
-
-* **Note** This is an enterprise feature, and requires a license to be used.
-
-#### Examples
-
-##### 
-
-```puppet
-st2::rbac { 'admin':
-  description => "Administrative user",
-  roles       => [
-    'observer',
-    'my_test_role',
-  ],
-}
-```
-
-#### Parameters
-
-The following parameters are available in the `st2::rbac` defined type:
-
-* [`ensure`](#ensure)
-* [`user`](#user)
-* [`description`](#description)
-* [`roles`](#roles)
-
-##### <a name="ensure"></a>`ensure`
-
-Data type: `Any`
-
-
-
-Default value: `'present'`
-
-##### <a name="user"></a>`user`
-
-Data type: `Any`
-
-
-
-Default value: `$name`
-
-##### <a name="description"></a>`description`
-
-Data type: `Any`
-
-
-
-Default value: `'Created and managed by Puppet'`
-
-##### <a name="roles"></a>`roles`
-
-Data type: `Any`
-
-
-
-Default value: `[]`
 
 ### <a name="st2service"></a>`st2::service`
 
